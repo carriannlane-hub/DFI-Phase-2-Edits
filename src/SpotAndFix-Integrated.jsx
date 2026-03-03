@@ -25,9 +25,14 @@ const GLOW = k => `${ACCENT[k]}18`;
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap";
 const CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{background:${T.bg};margin:0;padding:0;line-height:1.5}
+h1,h2,h3,h4,h5,h6{margin:0;padding:0;font-size:inherit;font-weight:inherit}
+p{margin:0;padding:0}
+button{font-family:inherit;font-size:inherit;color:inherit;line-height:inherit;margin:0;padding:0;background:none;border:none;cursor:pointer;text-align:left}
+textarea{font-family:inherit;font-size:inherit;color:inherit}
 *:focus-visible{outline:2px solid #fbbf24!important;outline-offset:3px!important;border-radius:4px}
 ::selection{background:rgba(244,63,94,0.3);color:#fff}
-body{background:${T.bg}}
 .skip{position:absolute;left:-9999px;top:auto;z-index:1000;padding:8px 16px;background:#fbbf24;color:#0f172a;font-family:'Josefin Sans',sans-serif;font-weight:700;text-decoration:none;border-radius:0 0 8px 0}
 .skip:focus{left:0;top:0}
 .fac-btn{position:absolute;left:-9999px;top:auto;z-index:1000;padding:8px 16px;background:#539bf5;color:#fff;font-family:'Josefin Sans',sans-serif;font-weight:700;border:none;border-radius:0 0 8px 0;cursor:pointer;font-size:13px}
@@ -36,14 +41,13 @@ body{background:${T.bg}}
 @keyframes fi{from{opacity:0}to{opacity:1}}
 @keyframes rs{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:640px){[data-grid]{grid-template-columns:1fr!important}}
-textarea{font-family:inherit}
 `;
 
 const sf = { fontFamily: "'Source Serif 4',Georgia,serif" };
 const jf = { fontFamily: "'Josefin Sans',sans-serif" };
 const btn = (x={}) => ({ ...jf, fontSize:15, fontWeight:600, border:"2px solid transparent", borderRadius:12, padding:"14px 28px", cursor:"pointer", transition:"all 0.2s", outline:"none", background:"rgba(30,41,59,0.6)", color:T.text, textAlign:"center", ...x });
 const pbtn = (bg,fg="#fff") => btn({ background:bg, color:fg, border:"none", fontWeight:700 });
-const tag = (c,bg) => ({ ...jf, fontSize:11, fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:c, background:bg||"transparent" });
+const tag = (c,bg) => ({ ...jf, fontSize:13, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:c, background:bg||"transparent" });
 
 // ─── MODULE METADATA ─────────────────────────────────────────────
 const MODS = [
@@ -156,7 +160,7 @@ function Shell({children,onDash}){
       {onDash&&<button className="fac-btn" onClick={onDash}>Open Facilitator Dashboard</button>}
       <div style={{position:"fixed",top:"-20%",right:"-10%",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(251,146,60,0.05) 0%,transparent 70%)",pointerEvents:"none"}} aria-hidden="true"/>
       <div style={{position:"fixed",bottom:"-15%",left:"-10%",width:500,height:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(59,130,246,0.04) 0%,transparent 70%)",pointerEvents:"none"}} aria-hidden="true"/>
-      <div style={{maxWidth:840,margin:"0 auto",padding:"32px 24px",position:"relative",zIndex:1}} id="main" role="main">{children}</div>
+      <div style={{maxWidth:840,margin:"0 auto",padding:"56px 24px 48px",position:"relative",zIndex:1}} id="main" role="main">{children}</div>
     </div>
   );
 }
@@ -171,9 +175,9 @@ function Header({num,title,focus,onBack}){
       <div>
         <div style={{display:"flex",alignItems:"baseline",gap:10}}>
           <span style={tag(c)}>{`Module ${num}`}</span>
-          {focus&&<span style={{fontSize:11,color:T.text3,fontWeight:600}}>{focus}</span>}
+          {focus&&<span style={{fontSize:13,color:T.text3,fontWeight:600}}>{focus}</span>}
         </div>
-        <div style={{fontSize:18,fontWeight:700}}>{title}</div>
+        <div style={{fontSize:22,fontWeight:700}}>{title}</div>
       </div>
     </div>
   );
@@ -184,8 +188,8 @@ function Progress({cur,tot,c}){
   return(
     <div style={{marginBottom:24}}>
       <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
-        <span style={{fontSize:12,fontWeight:600,color:T.text3}}>{cur} of {tot}</span>
-        <span style={{fontSize:12,fontWeight:600,color:c}}>{pct}%</span>
+        <span style={{fontSize:13,fontWeight:600,color:T.text3}}>{cur} of {tot}</span>
+        <span style={{fontSize:13,fontWeight:600,color:c}}>{pct}%</span>
       </div>
       <div style={{width:"100%",height:4,background:"rgba(148,163,184,0.1)",borderRadius:2}} role="progressbar" aria-valuenow={cur} aria-valuemin={0} aria-valuemax={tot}>
         <div style={{width:`${pct}%`,height:"100%",borderRadius:2,background:c,transition:"width 0.5s"}}/>
@@ -197,7 +201,7 @@ function Progress({cur,tot,c}){
 function Fb({ok,text,children}){
   return(
     <div style={{background:ok?T.okBg:T.errBg,border:`1px solid ${ok?"rgba(52,211,153,0.3)":"rgba(244,63,94,0.3)"}`,borderRadius:12,padding:"20px 24px",marginTop:20,animation:"fu 0.4s"}} role="alert">
-      <div style={{fontSize:13,fontWeight:700,color:ok?T.ok:T.err,marginBottom:8}}>{ok?"✓ Correct":"✗ Not quite"}</div>
+      <div style={{fontSize:14,fontWeight:700,color:ok?T.ok:T.err,marginBottom:8}}>{ok?"✓ Correct":"✗ Not quite"}</div>
       <div style={{...sf,fontSize:16,lineHeight:1.7,color:T.text}}>{text}</div>
       {children}
     </div>
@@ -283,7 +287,7 @@ function Mod1({onBack,dash}){
   if(ph==="intro")return(
     <div style={{textAlign:"center",animation:"fu 0.8s",padding:"60px 0"}}>
       <div style={{fontSize:64,marginBottom:16}} aria-hidden="true">{"🔍"}</div>
-      <div style={{marginBottom:4}}><span style={tag(c)}>Module 1</span>{" "}<span style={{fontSize:12,color:T.text3,fontWeight:600}}>Subject-Verb Agreement</span></div>
+      <div style={{marginBottom:4}}><span style={tag(c)}>Module 1</span>{" "}<span style={{fontSize:13,color:T.text3,fontWeight:600}}>Subject-Verb Agreement</span></div>
       <h1 style={{fontSize:36,fontWeight:700,marginBottom:12}}>One or Many?</h1>
       <p style={{...sf,fontSize:17,fontStyle:"italic",color:T.text2,maxWidth:460,margin:"0 auto 32px",lineHeight:1.7}}>Extra words pile up between the subject and verb. Your job: find the real subject and pick the verb that matches. In Part 1, you&rsquo;ll cross out the noise first. In Part 2, you&rsquo;re on your own.</p>
       <button onClick={()=>setPh("cx")} style={pbtn(`linear-gradient(135deg,${c},#2563eb)`)}>Begin {"→"}</button>
@@ -404,7 +408,7 @@ function Mod2({onBack,dash}){
   if(ph==="intro")return(
     <div style={{textAlign:"center",animation:"fu 0.8s",padding:"60px 0"}}>
       <div style={{fontSize:64,marginBottom:16}} aria-hidden="true">{"✎"}</div>
-      <div style={{marginBottom:4}}><span style={tag(c)}>Module 2</span>{" "}<span style={{fontSize:12,color:T.text3,fontWeight:600}}>Pronouns</span></div>
+      <div style={{marginBottom:4}}><span style={tag(c)}>Module 2</span>{" "}<span style={{fontSize:13,color:T.text3,fontWeight:600}}>Pronouns</span></div>
       <h1 style={{fontSize:36,fontWeight:700,marginBottom:12}}>The Reviewer&rsquo;s Red Pen</h1>
       <p style={{...sf,fontSize:17,fontStyle:"italic",color:T.text2,maxWidth:460,margin:"0 auto 32px",lineHeight:1.7}}>A reviewer flagged nine sentences. Some flags are right. Some are wrong. For each one, decide: defend the original or accept the change. Then say how confident you are.</p>
       <button onClick={()=>setPh("ex")} style={pbtn(`linear-gradient(135deg,${c},#f97316)`,"#0f172a")}>Begin {"→"}</button>
@@ -553,7 +557,7 @@ function Mod4PatA({d,onDone,si,tot}){
         <span style={{width:6,height:6,borderRadius:"50%",background:T.m4}}/>
         <span style={tag(T.m4)}>Fix the sentence</span>
       </div>
-      <p style={{fontSize:13,fontStyle:"italic",color:T.text3,marginBottom:16}}>{d.ctx}</p>
+      <p style={{fontSize:14,fontStyle:"italic",color:T.text3,marginBottom:16}}>{d.ctx}</p>
       <p style={{...sf,fontSize:15,fontWeight:600,color:T.text2,marginBottom:10}}>Something in this sentence creates an unintended meaning. Edit it to fix the problem.</p>
       <div style={{...card,padding:0,marginBottom:24}}>
         <div style={{padding:"10px 20px",background:"rgba(100,116,139,0.08)",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:8}}>
@@ -706,7 +710,7 @@ function Mod4({onBack,dash}){
       <div style={{textAlign:"center",animation:"fu 0.8s",padding:"60px 0"}}>
         <div style={{...sf,fontSize:120,color:T.m4,lineHeight:1,textShadow:`0 0 80px ${T.m4}25`,marginBottom:8}}>,</div>
         <p style={{fontSize:28,fontWeight:300,color:T.text,letterSpacing:"0.05em",marginBottom:32}}>One mark. Two meanings.</p>
-        <div style={{marginBottom:4}}><span style={tag(c)}>Module 4</span>{" "}<span style={{fontSize:12,color:T.text3,fontWeight:600}}>Commas</span></div>
+        <div style={{marginBottom:4}}><span style={tag(c)}>Module 4</span>{" "}<span style={{fontSize:13,color:T.text3,fontWeight:600}}>Commas</span></div>
         <h1 style={{fontSize:36,fontWeight:700,marginBottom:12}}>Commas Change <span style={{background:`linear-gradient(135deg,${c},#fb923c)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Everything</span></h1>
         <p style={{...sf,fontSize:17,fontStyle:"italic",color:T.text2,maxWidth:400,margin:"0 auto 32px"}}>Read every clause both ways. If the meaning changes, choose deliberately.</p>
         <button onClick={()=>setShow(false)} style={pbtn(`linear-gradient(135deg,${c},#fb923c)`)}>Begin {"→"}</button>
@@ -772,7 +776,7 @@ function Mod3PatA({d,onDone,si,tot}){
         <span style={{width:6,height:6,borderRadius:"50%",background:c}}/>
         <span style={tag(c)}>Fix the sentence</span>
       </div>
-      <p style={{fontSize:13,fontStyle:"italic",color:T.text3,marginBottom:16}}>{d.ctx}</p>
+      <p style={{fontSize:14,fontStyle:"italic",color:T.text3,marginBottom:16}}>{d.ctx}</p>
       <p style={{...sf,fontSize:15,fontWeight:600,color:T.text2,marginBottom:10}}>Something in this sentence says what nobody intended. Edit it to fix the problem.</p>
       <div style={{...card,padding:0,marginBottom:24}}>
         <div style={{padding:"10px 20px",background:"rgba(100,116,139,0.08)",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:8}}>
@@ -918,7 +922,7 @@ function Mod3PatB({d,onDone,si,tot}){
 
       {/* The sentence — no error flagged */}
       <p style={{...sf,fontSize:15,fontWeight:600,color:T.text2,marginBottom:10}}>Here&rsquo;s the original sentence. Find and fix the problem.</p>
-      <p style={{fontSize:13,fontStyle:"italic",color:T.text3,marginBottom:10}}>{d.ctx}</p>
+      <p style={{fontSize:14,fontStyle:"italic",color:T.text3,marginBottom:10}}>{d.ctx}</p>
       <div style={{...card,padding:0,marginBottom:24}}>
         <div style={{padding:"10px 20px",background:"rgba(100,116,139,0.08)",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:8,height:8,borderRadius:"50%",background:c,opacity:0.6}}/>
@@ -981,7 +985,7 @@ function Mod3({onBack,dash}){
     return(
       <div style={{textAlign:"center",animation:"fu 0.8s",padding:"60px 0"}}>
         <div style={{fontSize:64,marginBottom:16}} aria-hidden="true">{"🔍"}</div>
-        <div style={{marginBottom:4}}><span style={tag(c)}>Module 3</span>{" "}<span style={{fontSize:12,color:T.text3,fontWeight:600}}>Modifiers</span></div>
+        <div style={{marginBottom:4}}><span style={tag(c)}>Module 3</span>{" "}<span style={{fontSize:13,color:T.text3,fontWeight:600}}>Modifiers</span></div>
         <h1 style={{fontSize:36,fontWeight:700,marginBottom:12}}>Not What You Meant</h1>
         <p style={{...sf,fontSize:17,fontStyle:"italic",color:T.text2,maxWidth:440,margin:"0 auto 32px",lineHeight:1.7}}>These sentences say things nobody intended. One of them made the news. Figure out what went wrong.</p>
         <button onClick={()=>setShow(false)} style={pbtn(`linear-gradient(135deg,${c},#16a34a)`)}>Begin {"→"}</button>
@@ -1121,12 +1125,12 @@ function Home({onSelect,tRef}){
   return(
     <div style={{animation:"fu 0.6s"}}>
       <div style={{textAlign:"center",marginBottom:40}}>
-        <h1 ref={tRef} style={{fontSize:36,fontWeight:700,marginBottom:8,cursor:"default",userSelect:"none"}} tabIndex={-1}>Spot &amp; Fix</h1>
+        <h1 ref={tRef} style={{fontSize:36,fontWeight:700,marginBottom:8,cursor:"default",userSelect:"none",color:T.text}} tabIndex={-1}>Spot &amp; Fix</h1>
         <p style={{...sf,fontSize:18,color:T.text2,lineHeight:1.7,maxWidth:560,margin:"0 auto"}}>You already know what happens when a sentence goes out wrong. Someone calls. Someone misreads a deadline. Someone&rsquo;s attorney finds the loophole in your clause. Let&rsquo;s jump into those moments where an edit makes all the difference.</p>
       </div>
       <div style={{display:"grid",gap:16}}>
         {MODS.map((m,mi)=>{const ac=ACCENT[m.id];return(
-          <button key={m.id} onClick={()=>onSelect(m.id)} style={{...card,padding:"24px 28px",textAlign:"left",cursor:"pointer",border:`1px solid ${T.border}`,transition:"all 0.25s",display:"flex",gap:20,alignItems:"flex-start",animation:`fu 0.5s both`,animationDelay:`${mi*0.08}s`}}
+          <button key={m.id} onClick={()=>onSelect(m.id)} style={{...card,padding:"24px 28px",textAlign:"left",cursor:"pointer",color:T.text,border:`1px solid ${T.border}`,transition:"all 0.25s",display:"flex",gap:20,alignItems:"flex-start",animation:`fu 0.5s both`,animationDelay:`${mi*0.08}s`}}
             onMouseEnter={e=>{e.currentTarget.style.borderColor=ac;e.currentTarget.style.boxShadow=`0 0 30px ${GLOW(m.id)}`}}
             onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;e.currentTarget.style.boxShadow="none"}}
             aria-label={`Module ${m.id}: ${m.title} — ${m.focus}`}>
@@ -1134,13 +1138,13 @@ function Home({onSelect,tRef}){
             <div style={{flex:1}}>
               <div style={{display:"flex",alignItems:"baseline",gap:10,marginBottom:4}}>
                 <span style={tag(ac)}>Module {m.id}</span>
-                <span style={{fontSize:11,color:T.text3,fontWeight:600}}>{m.focus}</span>
-                {m.status==="soon"&&<span style={{fontSize:10,fontWeight:600,color:T.m2,background:"rgba(251,191,36,0.1)",padding:"2px 8px",borderRadius:4}}>In progress</span>}
+                <span style={{fontSize:13,color:T.text3,fontWeight:600}}>{m.focus}</span>
+                {m.status==="soon"&&<span style={{fontSize:12,fontWeight:600,color:T.m2,background:"rgba(251,191,36,0.1)",padding:"2px 8px",borderRadius:4}}>In progress</span>}
               </div>
-              <div style={{fontSize:18,fontWeight:700,marginBottom:6}}>{m.title}</div>
-              <p style={{...sf,fontSize:15,color:T.text2,lineHeight:1.6,margin:0}}>{m.desc}</p>
+              <div style={{fontSize:20,fontWeight:700,marginBottom:6,color:T.text}}>{m.title}</div>
+              <p style={{...sf,fontSize:16,color:T.text2,lineHeight:1.6,margin:0}}>{m.desc}</p>
               <div style={{display:"flex",gap:10,marginTop:10}}>
-                <span style={{fontSize:12,color:T.text3}}>{m.n} sentences</span>
+                <span style={{fontSize:13,color:T.text3}}>{m.n} sentences</span>
               </div>
             </div>
             <div style={{color:T.text3,fontSize:20,flexShrink:0,marginTop:8}}>{"→"}</div>
