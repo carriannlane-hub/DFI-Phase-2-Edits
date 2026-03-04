@@ -30,7 +30,7 @@ body{background:${T.bg};margin:0;padding:0;line-height:1.5}
 h1,h2,h3,h4,h5,h6{margin:0;padding:0;font-size:inherit;font-weight:inherit}
 p{margin:0;padding:0}
 button{font-family:inherit;font-size:inherit;color:inherit;line-height:inherit;margin:0;padding:0;background:none;border:none;cursor:pointer;text-align:left}
-textarea{font-family:inherit;font-size:inherit;color:inherit}
+textarea,input{font-family:inherit;font-size:inherit;color:inherit}
 *:focus-visible{outline:2px solid #fbbf24!important;outline-offset:3px!important;border-radius:4px}
 ::selection{background:rgba(244,63,94,0.3);color:#fff}
 .skip{position:absolute;left:-9999px;top:auto;z-index:1000;padding:8px 16px;background:#fbbf24;color:#0f172a;font-family:'Josefin Sans',sans-serif;font-weight:700;text-decoration:none;border-radius:0 0 8px 0}
@@ -48,6 +48,10 @@ const jf = { fontFamily: "'Josefin Sans',sans-serif" };
 const btn = (x={}) => ({ ...jf, fontSize:15, fontWeight:600, border:"2px solid transparent", borderRadius:12, padding:"14px 28px", cursor:"pointer", transition:"all 0.2s", outline:"none", background:"rgba(30,41,59,0.6)", color:T.text, textAlign:"center", ...x });
 const pbtn = (bg,fg="#fff") => btn({ background:bg, color:fg, border:"none", fontWeight:700 });
 const tag = (c,bg) => ({ ...jf, fontSize:13, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:c, background:bg||"transparent" });
+
+// ─── CLEARANCE GATE CODES ────────────────────────────────────────
+// Change these anytime. Announce each code aloud when the room is ready.
+const GATE_CODES = { 1:"DESK", 2:"FLAG", 3:"DRAFT", 4:"PROOF" };
 
 // ─── MODULE METADATA ─────────────────────────────────────────────
 const MODS = [
@@ -238,12 +242,72 @@ function TrapSummary({groups}){
 const card = { background:"rgba(30,41,59,0.8)", borderRadius:16, border:`1px solid rgba(148,163,184,0.1)`, padding:"28px 32px", backdropFilter:"blur(12px)" };
 
 // ═════════════════════════════════════════════════════════════════
+// CLEARANCE GATE
+// ═════════════════════════════════════════════════════════════════
+
+function ClearanceGate({num,onClear}){
+  const m=MODS.find(x=>x.id===num);
+  const c=ACCENT[num];
+  const [code,setCode]=useState("");
+  const [wrong,setWrong]=useState(false);
+  const correct=GATE_CODES[num];
+  const inputRef=useRef(null);
+
+  const check=()=>{
+    if(code.trim().toUpperCase()===correct.toUpperCase()){
+      onClear();
+    } else {
+      setWrong(true);
+      setTimeout(()=>setWrong(false),1200);
+    }
+  };
+
+  const onKey=(e)=>{if(e.key==="Enter"&&code.trim())check()};
+
+  return(
+    <div style={{textAlign:"center",animation:"fu 0.8s",padding:"48px 0"}}>
+      <div style={{width:56,height:56,borderRadius:14,background:GLOW(num),border:`2px solid ${c}50`,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:18,fontWeight:800,color:c,marginBottom:20}}>{num}</div>
+      <div style={{marginBottom:4}}>
+        <span style={tag(c)}>Clearance Level {num}</span>
+      </div>
+      <h1 style={{fontSize:32,fontWeight:700,marginBottom:8,color:T.text}}>{m.title}</h1>
+      <p style={{...sf,fontSize:16,color:T.text2,maxWidth:480,margin:"0 auto 32px",lineHeight:1.7}}>{m.desc}</p>
+
+      <div style={{...card,maxWidth:380,margin:"0 auto",padding:"28px 32px"}}>
+        <p style={{...sf,fontSize:15,color:T.text2,marginBottom:16,lineHeight:1.6}}>You've been cleared for the next level of review. Enter your clearance code to proceed.</p>
+        <div style={{position:"relative",marginBottom:16}}>
+          <input
+            ref={inputRef}
+            type="text"
+            value={code}
+            onChange={e=>{setCode(e.target.value.toUpperCase());setWrong(false)}}
+            onKeyDown={onKey}
+            placeholder="ENTER CODE"
+            autoComplete="off"
+            aria-label="Clearance code"
+            style={{...jf,width:"100%",fontSize:18,fontWeight:700,letterSpacing:"0.15em",textAlign:"center",padding:"14px 20px",background:"rgba(148,163,184,0.06)",border:`2px solid ${wrong?"rgba(244,63,94,0.6)":code?`${c}60`:T.border}`,borderRadius:10,color:T.text,outline:"none",transition:"border-color 0.3s"}}
+          />
+          {wrong&&<p style={{...jf,fontSize:13,color:T.err,marginTop:8,animation:"fu 0.3s"}} role="alert">Code not recognized. Listen for your facilitator.</p>}
+        </div>
+        <button
+          onClick={check}
+          disabled={!code.trim()}
+          style={{...pbtn(code.trim()?`linear-gradient(135deg,${c},${num<=2?"#2563eb":"#16a34a"})`:T.bgHover,code.trim()?"#fff":T.text3),width:"100%",opacity:code.trim()?1:0.5,cursor:code.trim()?"pointer":"not-allowed"}}
+        >Proceed {"→"}</button>
+      </div>
+
+      <p style={{...sf,fontSize:14,color:T.text3,marginTop:24,fontStyle:"italic"}}>Waiting for your facilitator to release this module.</p>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════
 // MODULE 1: SUBJECT-VERB AGREEMENT
 // ═════════════════════════════════════════════════════════════════
 
 function Mod1({onBack,dash}){
   const c=T.m1;
-  const [ph,setPh]=useState("intro"); // intro | cx | tr | fs | done
+  const [ph,setPh]=useState("gate"); // gate | intro | cx | tr | fs | done
   const [i,setI]=useState(0);
   const [xd,setXd]=useState(new Set());
   const [vb,setVb]=useState(null);
@@ -283,6 +347,8 @@ function Mod1({onBack,dash}){
     if(ch&&!sOk)return ch.fb;
     return `The subject is “${s.sub}”. Verb: “${s.ans}.”`;
   };
+
+  if(ph==="gate")return <ClearanceGate num={1} onClear={()=>setPh("intro")}/>;
 
   if(ph==="intro")return(
     <div style={{textAlign:"center",animation:"fu 0.8s",padding:"60px 0"}}>
@@ -382,7 +448,7 @@ function Mod1({onBack,dash}){
 
 function Mod2({onBack,dash}){
   const c=T.m2;
-  const [ph,setPh]=useState("intro"); // intro | ex | done
+  const [ph,setPh]=useState("gate"); // gate | intro | ex | done
   const [i,setI]=useState(0);
   const [ch,setCh]=useState(null);
   const [cf,setCf]=useState(null);
@@ -404,6 +470,8 @@ function Mod2({onBack,dash}){
     setCh(null);setCf(null);setRv(0);
     i<PRO.length-1?setI(j=>j+1):setPh("done");
   };
+
+  if(ph==="gate")return <ClearanceGate num={2} onClear={()=>setPh("intro")}/>;
 
   if(ph==="intro")return(
     <div style={{textAlign:"center",animation:"fu 0.8s",padding:"60px 0"}}>
@@ -691,6 +759,7 @@ function Mod4PatD({d,onDone,si,tot}){
 
 function Mod4({onBack,dash}){
   const c=T.m4;
+  const [gate,setGate]=useState(true);
   const [show,setShow]=useState(true);
   const [i,setI]=useState(0);
   const [done,setDone]=useState(false);
@@ -703,6 +772,8 @@ function Mod4({onBack,dash}){
     if(i+1>=CM.length)setTimeout(()=>setDone(true),400);
     else setTimeout(()=>setI(j=>j+1),400);
   };
+
+  if(gate)return <ClearanceGate num={4} onClear={()=>setGate(false)}/>;
 
   // Opening animation
   if(show){
@@ -968,6 +1039,7 @@ function Mod3PatB({d,onDone,si,tot}){
 
 function Mod3({onBack,dash}){
   const c=T.m3;
+  const [gate,setGate]=useState(true);
   const [show,setShow]=useState(true);
   const [i,setI]=useState(0);
   const [done,setDone]=useState(false);
@@ -980,6 +1052,8 @@ function Mod3({onBack,dash}){
     if(i+1>=MOD3.length)setTimeout(()=>setDone(true),400);
     else setTimeout(()=>setI(j=>j+1),400);
   };
+
+  if(gate)return <ClearanceGate num={3} onClear={()=>setGate(false)}/>;
 
   if(show){
     return(
@@ -1081,6 +1155,16 @@ function Dashboard({onClose,dash}){
       <div style={{...card,marginBottom:16,animation:"fu 0.3s"}}>
         <div style={{...tag(T.m2),marginBottom:12}}>How it works in the classroom</div>
         <p style={{...sf,fontSize:15,color:T.text2,lineHeight:1.7}}>In the deployed app, this dashboard aggregates anonymized data from all 25 learners. Here it shows your own session data as a preview. Traps where the room struggled surface first—those are your debrief starting points.</p>
+      </div>
+
+      <div style={{...card,marginBottom:16,animation:"fu 0.32s"}}>
+        <div style={{...tag(T.text3),marginBottom:12}}>Clearance Codes</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
+          {MODS.map(m=><div key={m.id} style={{background:GLOW(m.id),border:`1px solid ${ACCENT[m.id]}30`,borderRadius:8,padding:"10px 12px",textAlign:"center"}}>
+            <div style={{...jf,fontSize:13,fontWeight:600,color:T.text3,marginBottom:4}}>Module {m.id}</div>
+            <div style={{...jf,fontSize:18,fontWeight:800,color:ACCENT[m.id],letterSpacing:"0.1em"}}>{GATE_CODES[m.id]}</div>
+          </div>)}
+        </div>
       </div>
 
       <div style={{...card,marginBottom:16,animation:"fu 0.35s"}}>
